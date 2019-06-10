@@ -71,7 +71,7 @@
                   </div>
 
 
-
+                  <c:if test="${user.powerid!=1}">
                   <div class="layui-form-item">
                       <label class="layui-form-label"><span class="x-red">*</span>权限</label>
                       <div class="layui-input-inline">
@@ -82,8 +82,10 @@
                           </select>
                       </div>
                   </div>
+                  </c:if>
 
-                  <c:if test="${empty user}"  >
+
+                   <c:if test="${empty user}"  >
                   <div class="layui-form-item">
                       <label for="password" class="layui-form-label">
                           <span class="x-red">*</span>密码
