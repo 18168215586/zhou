@@ -23,4 +23,6 @@ public interface UserMapper {
 
     User checkUname(String username);
 
+    User checkPwd(User user);
+
 }

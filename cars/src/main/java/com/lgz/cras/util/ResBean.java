@@ -8,6 +8,7 @@ public class ResBean {
     private Long count;
     private List data;
 
+
     public ResBean() {
     }
 

@@ -62,9 +62,9 @@
                     <dl class="layui-nav-child">
                         <!-- 二级菜单 -->
                         <dd>
-                            <a onclick="xadmin.open('个人信息','user/toEdit.do?id=${loginUser.id}')">个人信息</a></dd>
+                            <a onclick="xadmin.open('个人信息','user/toEdit.do?id=${loginUser.id}',600,400)">个人信息</a></dd>
                         <dd>
-                            <a onclick="xadmin.open('切换帐号','http://www.baidu.com')">修改密码</a></dd>
+                            <a onclick="xadmin.open('切换帐号','user/toPwd.do',600,400)">修改密码</a></dd>
                         <dd>
                             <a href="exit.do">退出</a></dd>
                     </dl>
@@ -109,7 +109,7 @@
                                     <cite>车辆列表</cite></a>
                             </li>
                             <li>
-                                <a onclick="xadmin.add_tab('品牌管理','order-list1.html')">
+                                <a onclick="xadmin.add_tab('品牌管理','brand/toList.do',true)">
                                     <i class="iconfont">&#xe6a7;</i>
                                     <cite>品牌管理</cite></a>
                             </li>

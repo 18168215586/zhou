@@ -188,4 +188,8 @@
   <select id="checkUname" resultType="User" parameterType="java.lang.String">
       select <include refid="Base_Column_List"/>from user where username=#{username}
   </select>
+
+  <select id="checkPwd" parameterType="User" resultType="User">
+    select * from user where id=#{id} and password=#{password}
+  </select>
 </mapper>
