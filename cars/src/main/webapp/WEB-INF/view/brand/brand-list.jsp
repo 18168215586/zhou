@@ -3,26 +3,25 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html class="x-admin-sm">
-
 <head>
     <base href="${basePath}">
     <meta charset="UTF-8">
     <title>品牌列表</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
     <link rel="stylesheet" href="static/css/font.css">
     <link rel="stylesheet" href="static/css/xadmin.css">
-
+    <script src="static/jQuery/jquery-3.4.0.js"></script>
+    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script src="static/lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="static/js/xadmin.js"></script>
-    <script src="static/js/jquery.min.js"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-
 <body>
 <div class="x-nav">
             <span class="layui-breadcrumb">
@@ -49,7 +48,7 @@
                     </form>
                 </div>
                 <div class="layui-card-body ">
-                    <table class="layui-table layui-form" id="treeTable">
+                    <table class="layui-table layui-form" id="tableTree">
                     </table>
                 </div>
             </div>
@@ -58,43 +57,40 @@
 </div>
 <script type="text/html" id="staTmpl">
 
-</script>
+        </script>
 <script>
     layui.config({
-        /*设置第三方插件地址*/
+        /*设置第三方插件的地址*/
         base:'static/lib/layui/lay/modules/'
     });
     layui.use(['form','table','treeTable'], function(){
-       var form = layui.form;
-       var treeTable=layui.treeTable;
-       treeTable.render({
-           elem:'#treeTable',
-           url:'brand/getPage.do',
-           icon_key:'brand',
-           cols:[
-               {key:'id',title:'编号'},
-               {key:'brand',title:'品牌名'},
-               {key:'pid',title:'父Id'},
-               {key:'status',title:'状态',template:staTmpl},
-               {title:'操作',template:optTmpl}
-              /* {key:'',title:''},
-               {key:'',title:''},*/
-           ],
-           end:function () {
-               form.render();
-           }
-       });
-    });
+        var form = layui.form;
+        var treeTable=layui.treeTable;
+        treeTable.render({
+            elem:'#tableTree',
+            url:'brand/getPage.do',
+            icon_key:'brand',
+            cols:[
+                {key:'id',title:'编号'},
+                {key:'brand',title:'品牌名称'},
+                {key:'pid',title:'父id'},
+                {key:'status',title:'状态',template:staTmpl},
+                {title:'操作',template:optTmpl}
+            ],end:function () {
+                form.render();/*渲染表单元素*/
+            }
+        })
 
+    });
 
     function staTmpl(obj) {
         var checked='';
         if (obj.status==1){
             checked='checked';
         }
-        return ' <input type="checkbox"lay-text="可用|禁用" lay-skin="switch" lay-filter="staFilter" '+checked+' >';
-    }
+        return '<input type="checkbox" lay-text="可用|禁用" lay-skin="switch" lay-filter="staFilter" '+checked+' >';
 
+    };
     function optTmpl(obj) {
         var btns;
         var editBtn='<button type="button" class="layui-btn">修改</button>';
@@ -103,21 +99,48 @@
         $.ajax({
             url:'brand/getChildren.do',
             data:{
-                pid:obj.id
+                pid:obj.id,
             },
             dataType:'json',
             async:false,
             success:function (res) {
                 if (res.code==1){
-                      btns+='<button type="button" class="layui-btn  layui-btn-danger">删除</button>';
+                    btns+='<button onclick="del('+obj.id+')" type="button" class="layui-btn layui-btn-danger">删除</button>';
+
                 }
             },
-            error:function () {
-                layer.alert('查询子选项出错!',{icon: 5});
-                console.log(e);
+            error:function (e) {
+                layer.alert("查询子选项出错",{icon: 5});
+                console.log(e)
             }
+
         });
         return btns;
+
+    }
+
+    function del(id) {
+        if (confirm("确定删除本数据吗")){
+            $.ajax({
+                url:'brand/delete.do',
+                data:{
+                    id:id
+                },
+                method:'post',
+                dataType: 'json',
+                success:function (res) {
+                    layer.alert(res.msg);
+                    // if (res.code==1){
+                    //     layer.alert(res.msg);
+                    // }
+                    location.reload();
+                },
+                error:function (e) {
+                    alert("与服务器链接失败")
+                    console.log(e)
+                }
+            })
+        }
     }
 
 
@@ -133,6 +156,7 @@
     // 分类展开收起的分类的逻辑
     //
     $(function(){
+
         $("tbody.x-cate tr[fid!='0']").hide();
         // 栏目多级显示效果
         $('.x-show').click(function () {

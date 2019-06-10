@@ -29,4 +29,13 @@ public class BrandServiceImpl implements BrandService {
         }
         return new ResBean(1);
     }
+
+    @Override
+    public ResBean deleteByKey(Integer id){
+        if (brandMapper.deleteByPrimaryKey(id)>0){
+            return new ResBean(1,"删除成功");
+        }
+        return new ResBean(0,"删除失败");
+    }
+
 }

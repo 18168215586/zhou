@@ -34,4 +34,11 @@ public class brandController {
     public ResBean getChildren(Brand brand){
         return brandService.getChildren(brand);
     }
+
+    @RequestMapping("/delete")
+    @ResponseBody
+    public ResBean deleteByKey(Integer id){
+        return brandService.deleteByKey(id);
+    }
+
 }

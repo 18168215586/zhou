@@ -10,4 +10,6 @@ public interface BrandService {
 
     ResBean getChildren(Brand brand);
 
+    ResBean deleteByKey(Integer id);
+
 }
