@@ -12,5 +12,6 @@ public interface PowerService {
 
     ResBean delete(Integer id);
 
-    ResBean checkPower(Power power, HttpSession session);
+    ResBean getPage(Integer page,Integer limit);
+    ResBean update(Power power,HttpSession session);
 }

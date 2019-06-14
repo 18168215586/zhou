@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="static/css/font.css">
     <link rel="stylesheet" href="static/css/xadmin.css">
-    <script src="static/jQuery/jquery-3.4.0.js"></script>
+    <script src="static/js/jquery.min.js"></script>
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script src="static/lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="static/js/xadmin.js"></script>
@@ -41,7 +41,8 @@
                 <div class="layui-card-body ">
                     <form class="layui-form layui-col-space5">
                         <div class="layui-input-inline layui-show-xs-block">
-                            <input class="layui-input" placeholder="分类名" name="cate_name"></div>
+                            <input type="hidden" name="pid" value="0">
+                            <input class="layui-input" placeholder="品牌名" name="brand" lay-verify="required" required></div>
                         <div class="layui-input-inline layui-show-xs-block">
                             <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
                         </div>
@@ -80,7 +81,66 @@
                 form.render();/*渲染表单元素*/
             }
         })
+        form.on('submit(sreach)',function (obj) {
+            $.ajax({
+                url:'brand/doEdit.do',
+                data: obj.field,
+                method: 'post',
+                dataType:'json',
+                success:function(res){
+                    layer.alert(res.msg,{icon:res.code==1?6:5},function () {
+                        location.reload();
+                    })
+                },
+                error:function (e) {
+                    layer.alert("查询子选项出错",{icon: 5});
+                    console.log(e)
+                }
 
+            });
+            return false;
+        });
+
+        form.on('switch(staFilter)',function (data) {
+            /*获取点击的开关所在的行标签*/
+            var tr=$(data.elem).parents('tr');
+            /*获取点击开关的pid的值*/
+            var pid=tr.attr('data-pid');
+            if (pid!=0){
+                /*寻找父级品牌tr*/
+                var ptr=$('tr[data-id='+pid+']');
+                /*获取辅机品牌的状态是否选中*/
+                var isCheck=ptr.find('input[type="checkbox"]')[0].checked;
+                /*父级品牌被禁用*/
+                if(!isCheck){
+                    layer.alert('父级被禁用，子级不可启用!');
+                    /*设置当前电机的开关为关闭状态*/
+                    data.elem.checked=false;
+                    /*重新渲染开关*/
+                    form.render();
+                    return false;
+                }
+            }
+            $.ajax({
+                url:'brand/updSta.do',
+                data:{
+                    id:data.value,
+                    status:data.elem.checked?1:2
+                },
+                method:'post',
+                dataType:'json',
+                success:function (res) {
+                    layer.msg(res.msg,{icon: res.code==1?6:5,time:800},function () {
+                        location.reload();
+                    });
+
+                },
+                error:function (e) {
+                    console.log(e)
+                    layer.alert('与服务器连接失败，请稍后在试...')
+                }
+            });
+        });
     });
 
     function staTmpl(obj) {
@@ -88,14 +148,17 @@
         if (obj.status==1){
             checked='checked';
         }
-        return '<input type="checkbox" lay-text="可用|禁用" lay-skin="switch" lay-filter="staFilter" '+checked+' >';
+        return '<input type="checkbox" lay-text="可用|禁用" lay-skin="switch" value="'+obj.id+'" lay-filter="staFilter" '+checked+' >';
 
     };
     function optTmpl(obj) {
-        var btns;
-        var editBtn='<button type="button" class="layui-btn">修改</button>';
-        var addChildren='<button type="button" class="layui-btn">添加子选项</button>';
-        btns=editBtn+addChildren;
+
+        var editBtn='<button type="button" onclick="xadmin.open(\'修改品牌\',\'brand/toEdit.do?id='+obj.id+'\',455,220)" class="layui-btn">修改</button>';
+        var addChildren='<button type="button" class="layui-btn" onclick="xadmin.open(\'添加子项\',\'brand/toEdit.do?pid='+obj.id+'\',455,220)">添加子项</button>';
+        if (obj.pid==0){
+            editBtn+=addChildren;
+        }
+
         $.ajax({
             url:'brand/getChildren.do',
             data:{
@@ -105,7 +168,7 @@
             async:false,
             success:function (res) {
                 if (res.code==1){
-                    btns+='<button onclick="del('+obj.id+')" type="button" class="layui-btn layui-btn-danger">删除</button>';
+                    editBtn+='<button onclick="del('+obj.id+')" type="button" class="layui-btn layui-btn-danger">删除</button>';
 
                 }
             },
@@ -115,12 +178,12 @@
             }
 
         });
-        return btns;
+        return editBtn;
 
     }
 
     function del(id) {
-        if (confirm("确定删除本数据吗")){
+        /*if (confirm("确定删除本数据吗")){
             $.ajax({
                 url:'brand/delete.do',
                 data:{
@@ -130,9 +193,7 @@
                 dataType: 'json',
                 success:function (res) {
                     layer.alert(res.msg);
-                    // if (res.code==1){
-                    //     layer.alert(res.msg);
-                    // }
+
                     location.reload();
                 },
                 error:function (e) {
@@ -140,7 +201,26 @@
                     console.log(e)
                 }
             })
-        }
+        }*/
+        layer.confirm('确定删除吗？',function(){
+            $.ajax({
+                url:'brand/delete.do',
+                data:{
+                    id:id
+                },
+                method:'post',
+                dataType: 'json',
+                success:function (res) {
+                    layer.alert(res.msg,{icon:res.code==1?6:5},function () {
+                        location.reload();
+                    });
+                },
+                error:function (e) {
+                    alert("与服务器链接失败")
+                    console.log(e)
+                }
+            })
+        })
     }
 
 

@@ -23,8 +23,7 @@ public class PowerController {
     @Autowired
     private PowerService powerService;
 
-
-    @RequestMapping("/getAll")
+/*    @RequestMapping("/getAll")
     @ResponseBody
     public Map<String, Object> getAll() {
         List<Power> list=new ArrayList<>();
@@ -34,12 +33,8 @@ public class PowerController {
         map.put("code",0);
         map.put("data",list);
         return map;
-    }
-    @RequestMapping("/delete")
-    @ResponseBody
-    public ResBean delete(Integer id){
-        return powerService.delete(id);
-    }
+    }*/
+
     @RequestMapping("/toList")
     public String toList(){
         return "power/power-list";
@@ -52,12 +47,24 @@ public class PowerController {
         return "power/power-edit";
     }
 
-    @RequestMapping("/doEdit")
+
+
+    @RequestMapping("/delete")
     @ResponseBody
-    public ResBean checkUname(Power power, HttpSession session){
-        return powerService.checkPower(power,session);
+    public ResBean delete(Power power){
+        return powerService.delete(power.getId());
     }
 
+    @RequestMapping("/getPage")
+    @ResponseBody
+    public ResBean getPage(Integer page,Integer limit){
+        return powerService.getPage(page,limit);
+    }
 
+    @RequestMapping("/doEdit")
+    @ResponseBody
+    public ResBean update(Power power, HttpSession session){
+        return powerService.update(power,session);
+    }
 }
 

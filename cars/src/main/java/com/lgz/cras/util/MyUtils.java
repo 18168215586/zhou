@@ -1,10 +1,14 @@
 package com.lgz.cras.util;
 
+import com.lgz.cras.pojo.User;
+
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -136,6 +140,7 @@ public class MyUtils {
 		}
 		return file.mkdirs();
 	}
+
 	public static void copyFile(String iPath,String oPath) {
 		//实例化被复制的对象
 		File iFile = new File(iPath);
@@ -171,6 +176,7 @@ public class MyUtils {
 			System.out.println("目标不存在");
 		}
 	}
+
 	public static Boolean isEmpty(String str){
 		return str==null||str.length()==0;
 	}
@@ -181,6 +187,34 @@ public class MyUtils {
 
 	public static String getUUID(){
 		return UUID.randomUUID().toString();
+	}
+
+
+
+
+	public static String getLoginName(HttpSession session){
+		User user= (User) session.getAttribute("loginUser");
+		if (user!=null){
+			return user.getRealname();
+		}
+		return null;
+	}
+
+	public static Integer getLoginPowerId(HttpSession session){
+		User user= (User) session.getAttribute("loginUser");
+		if (user!=null){
+			return user.getPowerid();
+		}
+		return null;
+	}
+
+
+	public static User getLoginUser(HttpSession session){
+		User user= (User) session.getAttribute("loginUser");
+		if (user!=null){
+			return user;
+		}
+		return new User();
 	}
 
 	public static void main(String[] args){

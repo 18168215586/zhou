@@ -135,4 +135,8 @@
     </where>
   </select>
 
+  <update id="updateByPid" parameterType="Brand">
+    update brand set status=#{status},update_admin=#{updateAdmin},update_date=#{updateDate} where pid=#{id}
+  </update>
+
 </mapper>

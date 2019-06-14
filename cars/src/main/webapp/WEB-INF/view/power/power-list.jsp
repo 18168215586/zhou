@@ -1,146 +1,169 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@page isELIgnored="false" %>
+<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html class="x-admin-sm">
-    <head>
-        <base href="${basePath}">
-        <meta charset="UTF-8">
-        <title>欢迎页面-X-admin2.2</title>
-        <meta name="renderer" content="webkit">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <link rel="stylesheet" href="static/css/font.css">
-        <link rel="stylesheet" href="static/css/xadmin.css">
-        <script src="static/js/jquery.min.js"></script>
 
-        <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
-        <script src="static/lib/layui/layui.js" charset="utf-8"></script>
-        <script type="text/javascript" src="static/js/xadmin.js"></script>
-        <!--[if lt IE 9]>
-          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
-    </head>
+<head>
+    <base href="${basePath}">
+    <meta charset="UTF-8">
+    <title>权限列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="static/css/font.css">
+    <link rel="stylesheet" href="static/css/xadmin.css">
+    <script src="static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="static/js/xadmin.js"></script>
+    <script src="static/js/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
 
-    <body>
-    <div class="x-nav">
-          <span class="layui-breadcrumb">
-            <a href="">首页</a>
-            <a href="">演示</a>
-            <a>
-              <cite>导航元素</cite></a>
-          </span>
-        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
-            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
-    </div>
-        <div class="layui-fluid">
-            <div class="layui-row layui-col-space15">
-                <div class="layui-col-md12">
-                    <div class="layui-card">
-                        <div class="layui-card-body ">
-                            <table class="layui-hide" id="powerTable" lay-filter="powerTable"></table>
+<body>
+<div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">用户管理</a>
+                <a>
+                    <cite>权限列表</cite></a>
+            </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" class="layui-input" name="power" id="power" required lay-verify="required" placeholder="权限名">
                         </div>
-                    </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn"  lay-submit="" lay-filter="add">添加</button>
+                        </div>
+                    </form>
+                    <table class="layui-table"  lay-filter="infoTable" id="infoTable"></table>
                 </div>
             </div>
-        </div> 
-    </body>
-
-
-
-
-
-    <script type="text/html" id="toolbar">
-        <button type="button" class="layui-btn layui-btn-sm" onclick="xadmin.open('用户添加','power/toEdit.do',600,400);">添加
-        </button>
-    </script>
-
-    <script type="text/html" id="opt">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="ednt">修改</button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</button>
-    </script>
-
-    <script>
-
-        layui.use('table', function(){
-            var table = layui.table;
-
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="opt">
+    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</button>
+</script>
+<script type="text/html" id="staTpl">
+    <input type="checkbox" value="{{d.id}}" lay-text="可用|禁用" lay-skin="switch" lay-filter="staFilter" {{d.status==1?'checked':''}}>
+</script>
+<script>
+    $(function () {
+        layui.use(['table','form'],function () {
+            var table=layui.table;
+            var form=layui.form;
             table.render({
-                elem: '#powerTable',
-                url:'power/getAll.do',
+                elem:'#infoTable',
+                url:'power/getPage.do',
                 method:'get',
                 page:true,
-                toolbar:'#toolbar',
-                cols: [[
-                    {field:'id', title: '编号', sort: true}
-                    ,{field:'power', title: '权限'} //width 支持：数字、百分比和不填写。你还可以通过 minWidth 参数局部定义当前单元格的最小宽度，layui 2.2.1 新增
-                    ,{field:'status', title: '状态', sort: true}
-                    ,{field:'createDate', title: '创建时间'}
-                    ,{field:'createAdmin', title: '创建人'}
-                    ,{field:'updateDate', title: '修改时间'} //单元格内容水平居中
-                    ,{field:'updateAdmin', title: '修改人'} //单元格内容水平居中
-                    ,{title:'操作',fixed:'right',toolbar:'#opt'}
-
+                toolbar:true,
+                cols:[[
+                    {field:'id',title:'编号',sort:true},
+                    {field:'power',title:'权限名',edit:'text'},
+                    {field:'createDate',title:'创建时间'},
+                    {field:'createAdmin',title:'创建人'},
+                    {field:'status',title:'状态',templet:'#staTpl'},
+                    {title:'操作',fixed:'right',toolbar:'#opt'}
                 ]]
-
             });
-            table.on('tool(powerTable)',function (data) {
-                if (data.event=='del'){
+            form.on('submit(add)',function (data) {
+                $.ajax({
+                    url:'power/doEdit.do',
+                    data:data.field,
+                    method:'post',
+                    dataType:'json',
+                    success:function (res) {
+                        layer.alert(res.msg,{icon:res.code==1?6:5},function (index) {
+                            $('#power').val('');
+                            layer.close(index);
+                            table.reload('infoTable');
+                        });
+                    },
+                    error:function (e) {
+                        layer.alert('添加权限出现异常！');
+                        console.log(e);
+                    }
+
+                });
+                return false;
+            });
+            form.on('switch(staFilter)',function (data) {
+                $.ajax({
+                    url:'power/doEdit.do',
+                    data:{
+                        id:data.value,
+                        status:data.elem.checked?1:2
+                    },
+                    method:'post',
+                    dataType:'json',
+                    success:function (res) {
+                        layer.msg(res.msg,{icon:res.code==1?6:5});
+                        table.reload('infoTable');
+                    },
+                    error:function (e) {
+                        console.log(e);
+                        layer.alert('与服务器链接失败，请稍后再试...');
+                    }
+                });
+            });
+
+            /*监听修改删除按钮的单击事件*/
+            table.on('tool(infoTable)',function (data) {
+                if(data.event=='del'){
                     layer.confirm('确定删除本数据吗？',function () {
                         $.ajax({
-                            url: 'power/delete.do',
+                            url:'power/delete.do',
                             data:{
                                 id:data.data.id
                             },
-                            method: 'post',
+                            method:'post',
                             dataType:'json',
                             success:function (res) {
                                 layer.alert(res.msg,function (index) {
                                     layer.close(index);
-                                    if (res.code==1){
-                                        table.reload('powerTable')
+                                    if(res.code==1){
+                                        table.reload('infoTable');
                                     }
                                 });
                             },
                             error:function (e) {
                                 console.log(e);
-                                layer.alert('与服务器链接失败，请稍后在试...',{icon:5});
+                                layer.alert('与服务器链接失败，请稍后再试...',{icon:5});
                             }
-                        })
-                    })
+                        });
+                    });
                 }
-            })
+            });
+            table.on('edit(infoTable)',function (obj) {
+                $.ajax({
+                    url:'power/doEdit.do',
+                    data:{
+                        id:obj.data.id,
+                        power:obj.value
+                    },
+                    dataType:'json',
+                    success:function (res) {
+                        layer.msg(res.msg,{icon:res.code==1?6:5,time:1000});
+                        table.reload('infoTable');
+                    }
+                });
+            });
+
+
         });
-
-
-      /* /!*用户-停用*!/
-      function member_stop(obj,id){
-          layer.confirm('确认要停用吗？',function(index){
-
-              if($(obj).attr('title')=='启用'){
-
-                //发异步把用户状态进行更改
-                $(obj).attr('title','停用')
-                $(obj).find('i').html('&#xe62f;');
-
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!',{icon: 5,time:1000});
-
-              }else{
-                $(obj).attr('title','启用')
-                $(obj).find('i').html('&#xe601;');
-
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!',{icon: 5,time:1000});
-              }
-              
-          });
-      }*/
-
-
-
-
-
-
-    </script>
-
+    });
+</script>
 </html>

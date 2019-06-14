@@ -139,7 +139,7 @@
                        layer.alert('与服务器连接失败，请稍后在试...')
                    }
                });
-            })
+            });
             /*监听修改按钮的单击事件*/
             table.on('tool(infoTable)',function (data) {
                 if (data.event=='del'){

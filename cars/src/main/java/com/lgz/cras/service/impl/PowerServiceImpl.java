@@ -1,5 +1,7 @@
 package com.lgz.cras.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lgz.cras.mapper.PowerMapper;
 import com.lgz.cras.pojo.Power;
 import com.lgz.cras.pojo.User;
@@ -32,23 +34,30 @@ public class PowerServiceImpl implements PowerService {
     }
 
     @Override
-    public ResBean checkPower(Power power, HttpSession session) {
-        User loginUser= (User) session.getAttribute("loginUser");
-        int result=0;
+    public ResBean getPage(Integer page, Integer limit) {
+        PageHelper.startPage(page,limit);
+        List<Power> list=powerMapper.getAll(new Power());
+        PageInfo<Power> pageInfo=new PageInfo<>(list);
+        return new ResBean(0,"暂无数据",pageInfo.getTotal(),list);
+    }
+
+    @Override
+    public ResBean update(Power power, HttpSession session) {
+        int result;
         if (power.getId()==null){
+            power.setCreateAdmin(MyUtils.getLoginName(session));
             power.setCreateDate(MyUtils.getNowTime());
-            power.setCreateAdmin(loginUser.getRealname());
             result=powerMapper.insertSelective(power);
         }else {
+            power.setUpdateAdmin(MyUtils.getLoginName(session));
             power.setUpdateDate(MyUtils.getNowTime());
-            power.setCreateAdmin(loginUser.getRealname());
             result=powerMapper.updateByPrimaryKeySelective(power);
         }
         if (result>0){
             return new ResBean(1,"更新成功");
         }
         return new ResBean(0,"更新失败");
-
     }
+
 
 }

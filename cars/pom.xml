@@ -50,7 +50,14 @@
 
   <dependencies>
     <dependency>
-      <!--jdk配置-->
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.8</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!--jdk配置-->
+    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${javax.version}</version>

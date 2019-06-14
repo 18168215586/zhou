@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
 @RequestMapping("/brand")
-public class brandController {
+public class BrandController {
 
     @Autowired
     private BrandService brandService;
@@ -25,8 +26,8 @@ public class brandController {
 
     @RequestMapping("/getPage")
     @ResponseBody
-    public List<Brand> getPage(){
-        return brandService.getAll(new Brand());
+    public List<Brand> getPage(Brand brand){
+        return brandService.getAll(brand);
     }
 
     @RequestMapping("/getChildren")
@@ -37,8 +38,31 @@ public class brandController {
 
     @RequestMapping("/delete")
     @ResponseBody
-    public ResBean deleteByKey(Integer id){
-        return brandService.deleteByKey(id);
+    public ResBean deleteByKey(Brand brand){
+        return brandService.deleteByKey(brand.getId());
+    }
+
+    @RequestMapping("/doEdit")
+    @ResponseBody
+    public ResBean update(Brand brand, HttpSession session){
+        return brandService.update(brand,session);
+    }
+
+
+    @RequestMapping("/updSta")
+    @ResponseBody
+    public ResBean updSta(Brand brand,HttpSession session){
+        return brandService.updatSatatus(brand,session);
+    }
+
+    @RequestMapping("/toEdit")
+    public String toEdit(HttpServletRequest request,Brand brand){
+        if (brand.getId()!=null){
+            request.setAttribute("br",brandService.getById(brand.getId()));
+        }else {
+            request.setAttribute("pid",brand.getPid());
+        }
+        return "brand/brand-edit";
     }
 
 }

@@ -125,4 +125,24 @@
       update_admin = #{updateAdmin,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into imgs(carid,img,create_admin,create_date) values
+    <foreach collection="list"  separator="," item="imgs">
+      (#{imgs.carid},#{imgs.img},#{imgs.createAdmin},#{imgs.createDate})
+    </foreach>
+  </insert>
+
+
+
+
+  <select id="getByCarId" parameterType="int" resultType="Imgs">
+    select * from imgs where carid=#{carId}
+  </select>
+
+  <delete id="deleteByCarId" parameterType="int">
+    delete from imgs where carid=#{carId}
+  </delete>
 </mapper>

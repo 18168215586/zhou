@@ -7,7 +7,7 @@
     <head>
         <base href="${basePath}">
         <meta charset="UTF-8">
-        <title>用户编辑页</title>
+        <title>品牌编辑</title>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <link rel="stylesheet" href="static/css/font.css">
@@ -25,29 +25,22 @@
         <div class="layui-fluid">
             <div class="layui-row">
                 <form class="layui-form">
-
-
-                    <div class="layui-form-item">
-                        <label for="power" class="layui-form-label">
-                            <span class="x-red">*</span>权限
-                        </label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="power" name="power" required="" lay-verify="request"
-                                   autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">
-                            <span class="x-red">*</span>
-                        </div>
-                    </div>
-
-
-
+                    <input type="hidden" name="id" value="${br.id}">
+                    <input type="hidden" name="pid" value="${pid}">
+                  <div class="layui-form-item">
+                      <label for="brand" class="layui-form-label">
+                          <span class="x-red">*</span>品牌名
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="text" value="${br.brand}" id="brand" name="brand" required lay-verify="required" autocomplete="off" class="layui-input">
+                      </div>
+                  </div>
 
                   <div class="layui-form-item">
-                      <label for="power" class="layui-form-label">
+                      <label class="layui-form-label">
                       </label>
                       <button  class="layui-btn" lay-filter="add" lay-submit="">
-                          增加
+                         更新
                       </button>
                   </div>
               </form>
@@ -60,49 +53,11 @@
                 var form = layui.form,
                 layer = layui.layer;
 
-                //自定义验证规则
-               /* form.verify({
-                    nikename: function(value) {
-                        if (value.length < 5||value.length>16) {
-                            return '长度在5-16之间';
-                        }
-                    },
-                    pass: [/(.+){6,12}$/, '密码必须6到12位'],
-                    repass: function(value) {
-                        if ($('#password').val() != $('#L_repass').val()) {
-                            return '两次密码不一致';
-                        }
-                    },
-                    username:[/^[a-zA-Z0-9_]+$/,'用户名只能是字母数字下划线组成'],
-                    rename:function (value) {
-                        var ok=false;
-                        $.ajax({
-                           url:'power/checkPower.do',
-                           data:{
-                               username: value
-                           } ,
-                            method:'get',
-                            dataType:'json',
-                            async:false,
-                            success:function (res) {
-                              ok=res.code==1;
-                            },
-                            error:function (e) {
-                                console.log(e);
-                                layer.msg('与服务器链接失败，请稍后在试...',{icon: 5});
-                            }
-                        });
-                        if (ok){
-                            return'该用户名已存在！';
-                        }
-                    }
-                });*/
-
                 //监听提交
                 form.on('submit(add)',
                 function(data) {
                     $.ajax({
-                        url:'power/doEdit.do',
+                        url:'brand/doEdit.do',
                         data:data.field,
                         method: 'post',
                         dataType: 'json',
