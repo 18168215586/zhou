@@ -45,7 +45,7 @@
     <!--aop支持版本号-->
     <aspectj.version>1.8.2</aspectj.version>
     <!--spring专用json包-->
-    <fastxml.version>2.5.1</fastxml.version>
+    <fastxml.version>2.13.4.1</fastxml.version>
   </properties>
 
   <dependencies>
